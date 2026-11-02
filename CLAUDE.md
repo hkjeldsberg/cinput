@@ -1,0 +1,2 @@
+# Rules
+- No git commands
