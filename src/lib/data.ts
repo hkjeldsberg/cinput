@@ -34,7 +34,13 @@ export async function getOverview() {
   const done = new Set(logs.map((l) => l.day_number));
   const minutes = logs.reduce((s, l) => s + l.minutes, 0);
   const minutesByDay = new Map<number, number>();
-  for (const l of logs) minutesByDay.set(l.day_number, (minutesByDay.get(l.day_number) ?? 0) + l.minutes);
+  const pctSums = new Map<number, number[]>();
+  for (const l of logs) {
+    minutesByDay.set(l.day_number, (minutesByDay.get(l.day_number) ?? 0) + l.minutes);
+    pctSums.set(l.day_number, [...(pctSums.get(l.day_number) ?? []), l.comprehension_pct]);
+  }
+  // Average comprehension per day; drives the lace on done flags.
+  const pctByDay = new Map([...pctSums].map(([d, p]) => [d, Math.round(p.reduce((a, b) => a + b, 0) / p.length)]));
   const current = settings.start_date ? currentDay(settings.start_date, today()) : 0;
   const levelUp = levelUpReady(logs);
   const phrases = phraseCount.count ?? 0;
@@ -44,6 +50,7 @@ export async function getOverview() {
     plan,
     done,
     minutesByDay,
+    pctByDay,
     current,
     minutes,
     phrases,

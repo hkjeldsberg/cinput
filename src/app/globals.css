@@ -1,43 +1,154 @@
 @import "tailwindcss";
 
+/* Papel picado: cut-paper flags over the plaza. Light / dark tokens from design/04. */
+:root {
+  --ink: #2b0a3d;
+  --ink-soft: #6b4a7a;
+  --ground: #fbeff5;
+  --card: #ffffff;
+  --fucsia: #c2185b;
+  --morado: #6a1b9a;
+  --verde: #00796b;
+  --cempasuchil: #ffb300;
+  --papel: #f1ddea;
+  /* Text on a fucsia fill (buttons, active nav). */
+  --on-fucsia: #ffffff;
+  /* Fucsia fill under white text; stays deep in dark mode for contrast. */
+  --flag-fucsia: #c2185b;
+  /* Success text on cards. */
+  --success: #00796b;
+  /* Missed (torn) flag. */
+  --torn: #e2d6e4;
+  /* Lace cut-outs on a colored flag. */
+  --lace: rgb(255 255 255 / 0.85);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ink: #fbeaf5;
+    --ink-soft: #c6a6d3;
+    --ground: #14051c;
+    --card: #2a1036;
+    --fucsia: #ff5fa2;
+    --morado: #7b2bb0;
+    --verde: #00796b;
+    --cempasuchil: #ffc94d;
+    --papel: #33163f;
+    --on-fucsia: #14051c;
+    --success: #5fd3c4;
+    --torn: #3a2645;
+    --lace: rgb(255 255 255 / 0.7);
+    color-scheme: dark;
+  }
+}
+
 @theme inline {
-  --color-ink: #0e3b5c;
-  --color-ink-soft: #4a6a80;
-  --color-foam: #e8f4f2;
-  --color-card: #ffffff;
-  --color-bloom: #d6246e;
-  --color-bloom-dark: #a8124f;
-  --color-sun: #ffc83d;
-  --color-leaf: #2e9e5b;
-  --color-mist: #c7d5db;
-  --color-line: #cfe3e0;
-  --font-sans: var(--font-bricolage);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ground: var(--ground);
+  --color-card: var(--card);
+  --color-fucsia: var(--fucsia);
+  --color-morado: var(--morado);
+  --color-verde: var(--verde);
+  --color-cempasuchil: var(--cempasuchil);
+  --color-papel: var(--papel);
+  --color-on-fucsia: var(--on-fucsia);
+  --color-torn: var(--torn);
+  --color-flag-fucsia: var(--flag-fucsia);
+  --color-success: var(--success);
+  --font-sans: var(--font-nunito);
+  --font-display: var(--font-bagel);
 }
 
 body {
-  background: var(--color-foam);
-  color: var(--color-ink);
-  font-family: var(--font-bricolage), system-ui, sans-serif;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-nunito), system-ui, sans-serif;
 }
 
 :focus-visible {
-  outline: 3px solid var(--color-bloom);
+  outline: 3px solid var(--fucsia);
   outline-offset: 2px;
 }
 
-/* Tile pop when a day turns done. */
-@keyframes pop {
-  0% { transform: scale(0.85); }
-  60% { transform: scale(1.08); }
-  100% { transform: scale(1); }
-}
-.tile-pop {
-  animation: pop 420ms cubic-bezier(0.3, 1.4, 0.5, 1);
-}
-@media (prefers-reduced-motion: reduce) {
-  .tile-pop { animation: none; }
+input[type="range"],
+input[type="checkbox"] {
+  accent-color: var(--fucsia);
 }
 
-input[type="range"] {
-  accent-color: var(--color-bloom);
+/* ---------- Pennants ---------- */
+
+/* Rectangle with a zig-zag bottom edge. */
+.pennant {
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 83.3% 86%, 66.6% 100%, 50% 86%, 33.3% 100%, 16.6% 86%, 0 100%);
+}
+/* Missed days hang torn. */
+.pennant-torn {
+  clip-path: polygon(0 0, 100% 0, 100% 52%, 86% 66%, 74% 56%, 62% 78%, 46% 64%, 34% 84%, 18% 70%, 0 80%);
+}
+
+/* A row of lace cut-outs. */
+.lace {
+  height: 5px;
+  background-image: radial-gradient(circle, var(--lace) 1.3px, transparent 1.7px);
+  background-size: 7px 5px;
+  background-position: center;
+}
+
+/* The whole garland sways gently. */
+@keyframes sway {
+  from { transform: rotate(-1.6deg); }
+  to { transform: rotate(1.6deg); }
+}
+.sway {
+  transform-origin: 50% 0;
+  animation: sway 3.4s ease-in-out infinite alternate;
+}
+
+/* On log, the flag drops in on the string (spring). */
+@keyframes flag-drop {
+  0% { transform: translateY(-120%) rotate(-8deg); opacity: 0; }
+  55% { transform: translateY(6%) rotate(4deg); opacity: 1; }
+  75% { transform: translateY(-2%) rotate(-2deg); }
+  100% { transform: translateY(0) rotate(0); }
+}
+.flag-drop {
+  transform-origin: 50% 0;
+  animation: flag-drop 900ms cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+}
+
+/* Confetti of little flags at the days goal. */
+@keyframes flag-fall {
+  from { transform: translate3d(0, -10vh, 0) rotate(0deg); }
+  to { transform: translate3d(var(--drift, 0), 110vh, 0) rotate(var(--spin, 540deg)); }
+}
+.flag-confetti {
+  position: absolute;
+  top: 0;
+  width: 12px;
+  height: 15px;
+  animation: flag-fall var(--dur, 3s) cubic-bezier(0.3, 0.2, 0.6, 1) var(--delay, 0s) forwards;
+}
+
+/* Rosette badge: segmented ring. */
+.rosette {
+  background: repeating-conic-gradient(
+    var(--morado) 0 30deg,
+    var(--cempasuchil) 30deg 60deg,
+    var(--fucsia) 60deg 90deg
+  );
+}
+.rosette-locked {
+  background: repeating-conic-gradient(var(--papel) 0 30deg, var(--torn) 30deg 60deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sway,
+  .flag-drop {
+    animation: none;
+  }
+  .flag-confetti {
+    display: none;
+  }
 }

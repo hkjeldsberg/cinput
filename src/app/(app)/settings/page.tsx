@@ -1,14 +1,14 @@
 import { Suspense } from "react";
-import { deleteVideo } from "@/app/actions";
+import { deleteVideo, logout } from "@/app/actions";
 import { AddLibraryVideoForm, StartDateForm } from "@/components/forms";
-import { btnGhost, card, LevelChip } from "@/components/ui";
+import { btn, btnGhost, card, LevelChip, pageTitle, sectionTitle } from "@/components/ui";
 import { getStartDate, getVideos, today } from "@/lib/data";
 import { watchUrl } from "@/lib/youtube";
 
 export default function SettingsPage() {
   return (
     <>
-      <h1 className="text-4xl font-extrabold">Settings</h1>
+      <h1 className={pageTitle}>Settings</h1>
       <Suspense fallback={<p className="text-ink-soft">Loading…</p>}>
         <Settings />
       </Suspense>
@@ -21,20 +21,20 @@ async function Settings() {
   return (
     <>
       <section className={card}>
-        <h2 className="mb-3 text-xl font-bold">Start date</h2>
+        <h2 className={`${sectionTitle} mb-3`}>Start date</h2>
         <StartDateForm defaultValue={start ?? today()} submitLabel="Save start date" />
       </section>
 
       <section className={card}>
-        <h2 className="mb-3 text-xl font-bold">Add a video to the library</h2>
+        <h2 className={`${sectionTitle} mb-3`}>Add a video to the library</h2>
         <AddLibraryVideoForm />
       </section>
 
       <section className={card}>
-        <h2 className="mb-3 text-xl font-bold">
-          Video library <span className="text-base font-normal text-ink-soft">{videos.length}</span>
+        <h2 className={`${sectionTitle} mb-3`}>
+          Video library <span className="text-[15px] font-normal text-ink-soft">{videos.length}</span>
         </h2>
-        <ul className="flex flex-col divide-y-2 divide-foam">
+        <ul className="flex flex-col divide-y-2 divide-papel">
           {videos.map((v) => (
             <li key={v.id} className="flex items-center justify-between gap-3 py-2">
               <div className="min-w-0">
@@ -42,11 +42,11 @@ async function Settings() {
                   href={v.youtube_id ? watchUrl(v.youtube_id) : v.url}
                   target="_blank"
                   rel="noreferrer"
-                  className="block truncate font-semibold hover:text-bloom"
+                  className="block truncate font-bold hover:text-fucsia"
                 >
                   {v.title}
                 </a>
-                <p className="flex flex-wrap items-center gap-2 text-sm text-ink-soft">
+                <p className="flex flex-wrap items-center gap-2 text-[13px] text-ink-soft">
                   <LevelChip level={v.level} />
                   {v.duration_min} min, {v.channel}
                 </p>
@@ -60,6 +60,12 @@ async function Settings() {
             </li>
           ))}
         </ul>
+      </section>
+      <section className={`${card} flex flex-wrap items-center justify-between gap-3`}>
+        <p className="text-[15px] text-ink-soft">Signed in on this device for 30 days.</p>
+        <form action={logout}>
+          <button className={btn}>Log out</button>
+        </form>
       </section>
     </>
   );

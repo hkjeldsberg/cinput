@@ -13,7 +13,7 @@ import {
   setStartDate,
 } from "@/app/actions";
 import { comprehensionHint } from "@/lib/progress";
-import { btn, HINT_TEXT, input, LEVEL_OPTIONS } from "./ui";
+import { btn, HINT_SHORT, input, LEVEL_OPTIONS } from "./ui";
 
 function Submit({ children, className = btn, disabled }: { children: React.ReactNode; className?: string; disabled?: boolean }) {
   const { pending } = useFormStatus();
@@ -27,13 +27,13 @@ function Submit({ children, className = btn, disabled }: { children: React.React
 function Message({ state, ok }: { state: FormState; ok?: string }) {
   if (state.error)
     return (
-      <p role="alert" className="text-sm font-medium text-bloom">
+      <p role="alert" className="text-[13px] font-bold text-fucsia">
         {state.error}
       </p>
     );
   if (state.ok && ok)
     return (
-      <p role="status" className="text-sm font-medium text-leaf">
+      <p role="status" className="text-[13px] font-bold text-success">
         {ok}
       </p>
     );
@@ -44,7 +44,7 @@ export function LoginForm() {
   const [state, action] = useActionState(login, {});
   return (
     <form action={action} className="flex flex-col gap-3">
-      <label htmlFor="password" className="font-medium">
+      <label htmlFor="password" className="font-bold">
         Password
       </label>
       <input id="password" name="password" type="password" required autoFocus autoComplete="current-password" className={input} />
@@ -58,7 +58,7 @@ export function StartDateForm({ defaultValue, submitLabel = "Start day 1" }: { d
   const [state, action] = useActionState(setStartDate, {});
   return (
     <form action={action} className="flex flex-wrap items-end gap-3">
-      <label className="flex flex-col gap-1 font-medium">
+      <label className="flex flex-col gap-1 font-bold">
         Day 1 is
         <input name="start_date" type="date" required defaultValue={defaultValue} className={input} />
       </label>
@@ -74,32 +74,36 @@ export function LogWatchForm({ dayNumber, videoId, duration }: { dayNumber: numb
   const [state, action] = useActionState(logWatch, {});
   const [pct, setPct] = useState(80);
   return (
-    <form action={action} className="mt-4 flex flex-col gap-3 rounded-2xl bg-foam p-4">
+    <form action={action} className="mt-4 flex flex-col gap-4 rounded-2xl bg-ground p-4">
       <input type="hidden" name="day_number" value={dayNumber} />
       <input type="hidden" name="video_id" value={videoId} />
-      <div className="flex flex-wrap gap-4">
-        <label className="flex flex-col gap-1 text-sm font-medium">
+      <label className="flex flex-col gap-2">
+        <span className="flex items-baseline justify-between gap-3 text-[15px] font-extrabold">
+          Comprehension
+          <span className="text-fucsia" aria-live="polite">
+            {pct}% · {HINT_SHORT[comprehensionHint(pct)]}
+          </span>
+        </span>
+        <input
+          name="comprehension_pct"
+          type="range"
+          min={0}
+          max={100}
+          step={5}
+          value={pct}
+          onChange={(e) => setPct(Number(e.target.value))}
+          className="w-full"
+        />
+      </label>
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+        <label className="flex items-center gap-2 text-[13px] font-bold whitespace-nowrap">
           Minutes watched
-          <input name="minutes" type="number" min={1} max={60} defaultValue={duration} className={`${input} w-24`} />
+          <input name="minutes" type="number" min={1} max={60} defaultValue={duration} className={`${input} w-20`} />
         </label>
-        <label className="flex flex-1 flex-col gap-1 text-sm font-medium">
-          I understood about {pct}%
-          <input
-            name="comprehension_pct"
-            type="range"
-            min={0}
-            max={100}
-            step={5}
-            value={pct}
-            onChange={(e) => setPct(Number(e.target.value))}
-            className="mt-2"
-          />
+        <label className="flex items-center gap-2 text-[13px]">
+          <input name="rewound" type="checkbox" className="size-4" />I rewound to catch something
         </label>
       </div>
-      <p className="text-sm text-ink-soft">{HINT_TEXT[comprehensionHint(pct)]}</p>
-      <label className="flex items-center gap-2 text-sm">
-        <input name="rewound" type="checkbox" className="size-4 accent-bloom" />I rewound to catch something
-      </label>
       <Message state={state} />
       <Submit className={`${btn} self-start`}>Mark as watched</Submit>
     </form>
@@ -108,13 +112,15 @@ export function LogWatchForm({ dayNumber, videoId, duration }: { dayNumber: numb
 
 export function PhraseForm({ watchLogId, remaining }: { watchLogId: string; remaining: number }) {
   const [state, action] = useActionState(addPhrase, {});
-  if (remaining <= 0) return <p className="text-sm text-ink-soft">All 5 phrases saved for this video.</p>;
+  if (remaining <= 0) return <p className="text-[13px] font-bold text-ink-soft">All 5 phrases saved for this video.</p>;
   return (
-    <form action={action} className="flex flex-col gap-2 sm:flex-row">
+    <form action={action} className="flex flex-col gap-2">
       <input type="hidden" name="watch_log_id" value={watchLogId} />
-      <input name="phrase" required maxLength={200} placeholder="Frase en español" aria-label="Phrase" className={input} />
-      <input name="meaning" maxLength={200} placeholder="Meaning (optional)" aria-label="Meaning" className={input} />
-      <Submit className={`${btn} shrink-0`}>Save phrase</Submit>
+      <div className="flex flex-col gap-2 sm:flex-row">
+        <input name="phrase" required maxLength={200} placeholder="Frase en español" aria-label="Phrase" className={input} />
+        <input name="meaning" maxLength={200} placeholder="Meaning (optional)" aria-label="Meaning" className={input} />
+        <Submit className={`${btn} shrink-0`}>Save phrase</Submit>
+      </div>
       <Message state={state} />
     </form>
   );
@@ -176,7 +182,7 @@ export function ReviewForm({
   return (
     <form action={action} className="flex flex-col gap-3">
       <input type="hidden" name="week" value={week} />
-      <label className="flex flex-col gap-1 text-sm font-medium">
+      <label className="flex flex-col gap-1 text-[13px] font-bold">
         Comprehension this week: about {pct}%
         <input
           name="comprehension_pct"
@@ -188,11 +194,11 @@ export function ReviewForm({
           onChange={(e) => setPct(Number(e.target.value))}
         />
       </label>
-      <label className="flex flex-col gap-1 text-sm font-medium">
+      <label className="flex flex-col gap-1 text-[13px] font-bold">
         What felt hard
         <textarea name="what_felt_hard" rows={2} maxLength={500} defaultValue={defaults.what_felt_hard} className={input} />
       </label>
-      <label className="flex flex-col gap-1 text-sm font-medium">
+      <label className="flex flex-col gap-1 text-[13px] font-bold">
         One topic to look for next week
         <input name="next_topic" maxLength={200} defaultValue={defaults.next_topic} className={input} />
       </label>

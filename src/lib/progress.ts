@@ -83,28 +83,77 @@ export function bestStreak(done: Set<number>): number {
   return best;
 }
 
-export type Badge = { id: string; label: string; emoji: string; earned: boolean; hint: string };
+export type Badge = {
+  id: string;
+  label: string;
+  /** Short text in the rosette center. */
+  glyph: string;
+  earned: boolean;
+  /** What it takes, e.g. "7 days in a row". */
+  hint: string;
+  /** Where you are now while locked, e.g. "3.2 of 12 h". */
+  progress: string;
+};
+
+const hours = (min: number) => (min / 60).toFixed(1).replace(/\.0$/, "");
 
 export function badges(s: Stats, goals: { hours: number; days: number }): Badge[] {
   return [
-    { id: "first", label: "Primer paso", emoji: "🌱", earned: s.daysDone >= 1, hint: "Finish your first day" },
-    { id: "streak7", label: "Racha de 7", emoji: "🔥", earned: s.bestStreak >= 7, hint: "7 days in a row" },
-    { id: "phrases25", label: "Coleccionista", emoji: "📝", earned: s.phrases >= 25, hint: "Save 25 phrases" },
-    { id: "hours5", label: "Cinco horas", emoji: "⏱️", earned: s.minutes >= 300, hint: "5 hours of input" },
+    {
+      id: "first",
+      label: "Primer paso",
+      glyph: "1",
+      earned: s.daysDone >= 1,
+      hint: "Finish your first day",
+      progress: "Finish your first day",
+    },
+    {
+      id: "streak7",
+      label: "Racha de 7",
+      glyph: "7",
+      earned: s.bestStreak >= 7,
+      hint: "7 days in a row",
+      progress: `Best streak ${s.bestStreak} of 7`,
+    },
+    {
+      id: "phrases25",
+      label: "Coleccionista",
+      glyph: "25",
+      earned: s.phrases >= 25,
+      hint: "Save 25 phrases",
+      progress: `${s.phrases} of 25 phrases`,
+    },
+    {
+      id: "hours5",
+      label: "Cinco horas",
+      glyph: "5h",
+      earned: s.minutes >= 300,
+      hint: "5 hours of input",
+      progress: `${hours(s.minutes)} of 5 h`,
+    },
     {
       id: "hoursGoal",
       label: `${goals.hours} horas`,
-      emoji: "🏆",
+      glyph: `${goals.hours}h`,
       earned: s.minutes >= goals.hours * 60,
       hint: `${goals.hours} hours of input`,
+      progress: `${hours(s.minutes)} of ${goals.hours} h`,
     },
     {
       id: "daysGoal",
       label: `${goals.days} días`,
-      emoji: "🎯",
+      glyph: String(goals.days),
       earned: s.daysDone >= goals.days,
       hint: `${goals.days} of 30 days done`,
+      progress: `${s.daysDone} of ${goals.days} days`,
     },
-    { id: "levelUp", label: "¡Sube de nivel!", emoji: "🚀", earned: s.levelUp, hint: "3 videos >90% without rewinding" },
+    {
+      id: "levelUp",
+      label: "¡Sube de nivel!",
+      glyph: "↑",
+      earned: s.levelUp,
+      hint: "3 videos over 90% without rewinding",
+      progress: "3 videos over 90% without rewinding",
+    },
   ];
 }

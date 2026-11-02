@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { Suspense } from "react";
-import { card } from "@/components/ui";
+import { card, pageTitle, sectionTitle } from "@/components/ui";
 import { getPhrases, type PhraseRow } from "@/lib/data";
 import { weekOf } from "@/lib/plan";
 
 export default function PhrasesPage() {
   return (
     <>
-      <h1 className="text-4xl font-extrabold">Your phrases</h1>
+      <h1 className={pageTitle}>Your phrases</h1>
       <Suspense fallback={<p className="text-ink-soft">Loading phrases…</p>}>
         <Phrases />
       </Suspense>
@@ -21,7 +21,7 @@ async function Phrases() {
     return (
       <p className={card}>
         No phrases yet. After you mark a video as watched, save up to 5 phrases from it.{" "}
-        <Link href="/" className="font-semibold text-bloom underline">
+        <Link href="/" className="font-bold text-fucsia underline">
           Go to today
         </Link>
       </p>
@@ -43,16 +43,16 @@ async function Phrases() {
         .sort(([a], [b]) => b - a)
         .map(([week, rows]) => (
           <section key={week} className={card}>
-            <h2 className="mb-3 text-xl font-bold">
+            <h2 className={`${sectionTitle} mb-3`}>
               {week === 5 ? "Review days" : `Semana ${week}`}{" "}
-              <span className="text-base font-normal text-ink-soft">{rows.length} phrases</span>
+              <span className="text-[15px] font-normal text-ink-soft">{rows.length} {rows.length === 1 ? "phrase" : "phrases"}</span>
             </h2>
-            <ul className="flex flex-col divide-y-2 divide-foam">
+            <ul className="flex flex-col divide-y-2 divide-papel">
               {rows.map((p) => (
                 <li key={p.id} className="py-2">
-                  <p className="text-lg font-semibold">{p.phrase}</p>
+                  <p className="text-[17px] font-bold">{p.phrase}</p>
                   {p.meaning && <p className="text-ink-soft">{p.meaning}</p>}
-                  <p className="text-xs text-ink-soft">
+                  <p className="text-[11px] text-ink-soft">
                     <Link href={`/day/${p.watch_logs.day_number}`} className="hover:underline">
                       Día {p.watch_logs.day_number}
                     </Link>

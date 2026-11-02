@@ -68,3 +68,27 @@ Sources: `PRD.md`, `V0.md`. Rules: `CLAUDE.md` (no git commands).
 - Browser run-through: wrong password rejected; start date set; board states (missed/today/done), restart banner, streak, hours ring; log video; 5 phrases saved then form replaced; phrase bank, weekly check, settings render. Test data deleted afterwards, start date reset to null.
 - Fixes found during verification: `connection()` before session time check (Cache Components), restart banner shows real missed count, English login error, review row label.
 - Not verified: logging in through the form in the automated tab (user logged in elsewhere; the session was tested with a token made from the dev AUTH_SECRET). Mobile layout checked by design only, not on a device.
+
+---
+
+# Redesign: "Papel picado" (design/04 Papel picado.pdf)
+
+## Plan
+- [x] Tokens light + dark (ink, ink-soft, ground, card, fucsia, morado, verde, cempasúchil, papel) as CSS vars; `@theme inline` maps them. Dark via `prefers-color-scheme`.
+- [x] Fonts: Bagel Fat One (display, day numbers), Nunito Sans (body/UI). Scale 52/30/22/15/13/11.
+- [x] Pennant tile component: zig-zag flag hanging from a week "string".
+  - done: colored (morado/verde/fucsia cycling by day) + lace: 1 row <80%, 2 rows ≥80%, marigold center ≥90%
+  - today: cempasúchil · missed: torn flag, faded · upcoming: papel
+  - sway 3.4s (reduced-motion off); first time a day is seen done the flag drops in (CSS spring, once per day via localStorage)
+  - confetti of flags once when days goal (25) is reached
+- [x] Board: hero (date, Día N de 30, link), stats in display numbers + fucsia hours ring, dotted banners, rosette badges with progress text
+- [x] Nav: active pill (fucsia) top and bottom; client NavLinks with usePathname
+- [x] Buttons: fucsia pill with morado ledge; level chips recolored; log form "Comprehension · 86% · Right level"
+- [x] Restyle day, phrases, review, guide, settings, login (garland on login); icons to pennant
+- [x] Verify: tests, tsc, lint, build; browser desktop + 390px mobile, light + dark; log/phrase/undo/remove/add flows still work; clean test data
+
+## Review
+- Implemented per design/04: tokens light+dark, Bagel Fat One + Nunito Sans, pennant garlands with lace/marigold/torn states, sway, drop-in, confetti, rosette badges with progress, dotted banners, active nav pills, fucsia ledge buttons, recolored level chips, pennant icons.
+- Deviations: CSS keyframes instead of framer-motion (same spring-drop look, no new dependency). Marigold dot sits inline before the minutes so small phone flags don't overflow. Desktop "Log out" moved to Settings so header and content share one column; mobile keeps it in the header.
+- Verified in Chrome: desktop 1728px and phone frames at 390px and 360px (no horizontal scroll), light and forced dark. Flows: log video (live hint), add/delete phrase, undo, add own video, remove from day, weekly check save. 23 tests, tsc, eslint, `next build` clean. Test data removed, start date reset.
+- Not verified: real iOS/Android device; OS-level dark mode switch (dark tested by applying the stylesheet's dark rules).

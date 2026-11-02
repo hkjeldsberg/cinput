@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { ReviewForm } from "@/components/forms";
-import { card } from "@/components/ui";
+import { card, pageTitle, sectionTitle } from "@/components/ui";
 import { getReviews } from "@/lib/data";
 import { WEEKS } from "@/lib/plan";
 
@@ -8,7 +8,7 @@ export default function ReviewPage() {
   return (
     <>
       <div>
-        <h1 className="text-4xl font-extrabold">Weekly check</h1>
+        <h1 className={pageTitle}>Weekly check</h1>
         <p className="mt-1 text-ink-soft">Under 5 minutes, once a week.</p>
       </div>
       <Suspense fallback={<p className="text-ink-soft">Loading weeks…</p>}>
@@ -31,9 +31,9 @@ async function Reviews() {
     const saved = reviews.find((r) => r.week === w.week);
     return (
       <section key={w.week} className={card}>
-        <h2 className="text-xl font-bold">Semana {w.week}</h2>
-        <p className="text-sm text-ink-soft">Target: {w.target}</p>
-        <p className="my-3 text-sm">
+        <h2 className={sectionTitle}>Semana {w.week}</h2>
+        <p className="text-[13px] text-ink-soft">Target: {w.target}</p>
+        <p className="my-3 text-[13px]">
           {weekLogs.length} videos, {minutes} min
           {avg !== null && <>, average comprehension {avg}%</>}
         </p>

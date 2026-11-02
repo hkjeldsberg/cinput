@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { assignVideos, DAILY_MAX_MIN, PLAN_DAYS, type SeedVideo } from "./plan";
 import {
+  badges,
   bestStreak,
   comprehensionHint,
   currentDay,
@@ -92,5 +93,19 @@ describe("assignVideos", () => {
   it("review days rewatch week-1 videos", () => {
     const week1 = new Set([1, 2, 3, 4, 5, 6, 7].flatMap((d) => result.get(d)!));
     for (const k of [...result.get(29)!, ...result.get(30)!]) expect(week1.has(k)).toBe(true);
+  });
+});
+
+describe("badges", () => {
+  it("reports progress while locked", () => {
+    const list = badges(
+      { daysDone: 7, minutes: 192, bestStreak: 5, levelUp: false, phrases: 23 },
+      { hours: 12, days: 25 },
+    );
+    const byId = Object.fromEntries(list.map((b) => [b.id, b]));
+    expect(byId.first.earned).toBe(true);
+    expect(byId.hoursGoal).toMatchObject({ earned: false, glyph: "12h", progress: "3.2 of 12 h" });
+    expect(byId.streak7.progress).toBe("Best streak 5 of 7");
+    expect(byId.hours5.progress).toBe("3.2 of 5 h");
   });
 });
