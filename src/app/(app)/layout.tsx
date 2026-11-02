@@ -2,10 +2,11 @@ import Link from "next/link";
 import { logout } from "@/app/actions";
 
 const NAV = [
-  { href: "/", label: "Days" },
-  { href: "/phrases", label: "Phrases" },
-  { href: "/review", label: "Weekly check" },
-  { href: "/settings", label: "Settings" },
+  { href: "/", label: "Days", short: "Days" },
+  { href: "/phrases", label: "Phrases", short: "Phrases" },
+  { href: "/review", label: "Weekly check", short: "Week" },
+  { href: "/guide", label: "How it works", short: "How to" },
+  { href: "/settings", label: "Settings", short: "Settings" },
 ] as const;
 
 export default function AppLayout({ children }: LayoutProps<"/">) {
@@ -29,11 +30,11 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
       <main className="flex flex-1 flex-col gap-6">{children}</main>
       <nav
         aria-label="Main"
-        className="fixed inset-x-0 bottom-0 grid grid-cols-4 border-t-2 border-line bg-white sm:hidden"
+        className="fixed inset-x-0 bottom-0 grid grid-cols-5 border-t-2 border-line bg-white sm:hidden"
       >
         {NAV.map((n) => (
           <Link key={n.href} href={n.href} className="py-3 text-center text-sm font-semibold">
-            {n.label}
+            {n.short}
           </Link>
         ))}
       </nav>

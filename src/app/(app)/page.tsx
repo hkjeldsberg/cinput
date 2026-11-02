@@ -33,6 +33,9 @@ async function Board() {
         <p className="mt-2 max-w-prose text-ink-soft">
           30 days, up to 30 minutes of video a day. Choose when day 1 is and the plan lines up from there.
         </p>
+        <Link href="/guide" className="mt-2 inline-block font-semibold text-bloom underline">
+          Read how it works first
+        </Link>
         <div className="mt-5">
           <StartDateForm defaultValue={today()} />
         </div>
